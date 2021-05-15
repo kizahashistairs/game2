@@ -46,4 +46,10 @@ public class player : MonoBehaviour
         g.transform.position=this.transform.position;
         g.SetActive(true);
     }
+    
+    private void OnTriggerEnter2D(Collider2D collision) {
+        if(collision.tag =="sokushi"){
+            Debug.Log("死");
+        }
+    }
 }
