@@ -6,6 +6,7 @@ public class enemyoffire : MonoBehaviour
 {
     [Header("攻撃オブジェクト")] public GameObject fire;
     [Header("攻撃間隔")]public float interval;
+    [Header("ライフ")]public int life=1;
     //[Header("yarareSE")]public AudioClip yarareSE;
     
 
@@ -14,7 +15,6 @@ public class enemyoffire : MonoBehaviour
     private float timer;
     private SpriteRenderer sr =null;
     private Rigidbody2D rb=null;
-    private ObjectCollision oc =null;
     private BoxCollider2D col =null;
     private bool isDead=false;
     // Start is called before the first frame update
@@ -23,7 +23,6 @@ public class enemyoffire : MonoBehaviour
         sr =GetComponent<SpriteRenderer>();
         rb =GetComponent<Rigidbody2D>();
         anim =GetComponent<Animator>();
-        oc =GetComponent<ObjectCollision>();
         col =GetComponent<BoxCollider2D>();
           if (anim == null || fire == null)
           {
@@ -50,16 +49,12 @@ public class enemyoffire : MonoBehaviour
                 timer+=Time.deltaTime;
             }
         }
-        if(oc.playerStepOn){
-            if(!isDead){
-                //GameManager.instance.PlaySE(yarareSE);
-                anim.Play("enemy_yarareta");
-                rb.velocity=new Vector2(0,0);
-                isDead=true;
-                col.enabled=false;
-                Destroy(gameObject, 1.5f);
-
-            }
+        if(life<=0){
+            anim.Play("enemy_yarareta");
+            rb.velocity=new Vector2(0,0);
+            isDead=true;
+            col.enabled=false;
+            Destroy(gameObject, 1.5f);
         }
     }
     public void attack(){
@@ -68,5 +63,12 @@ public class enemyoffire : MonoBehaviour
         g.transform.position=fire.transform.position;
         g.SetActive(true);
         //Debug.Log("attack");
+    }
+    private void OnTriggerEnter2D(Collider2D collision) {
+        //弾に当たったらライフがへる
+        if(collision.tag=="yourbullet"){
+            life--;
+            //playSE(弾が当たったSE)
+        }
     }
 }
