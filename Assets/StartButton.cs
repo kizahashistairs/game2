@@ -20,6 +20,7 @@ public class StartButton : MonoBehaviour
     // ボタンが押された場合、今回呼び出される関数
     public void OnClick()
     {
-        SceneManager.LoadScene("Stage_1");
+        GameManager.instance.stageNum=1;
+        SceneManager.LoadScene("Stage_"+GameManager.instance.stageNum);
     }
 }
