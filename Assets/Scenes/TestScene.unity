@@ -360,7 +360,7 @@ MonoBehaviour:
   fire: {fileID: 0}
   interval: 0
   life: 1
-  pattern: 1
+  pattern: 4
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

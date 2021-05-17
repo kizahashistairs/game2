@@ -7,7 +7,7 @@ public class enemyoffly2 : MonoBehaviour
     [Header("攻撃オブジェクト")] public GameObject fire;
     [Header("攻撃間隔")]public float interval;
     [Header("ライフ")]public int life=1;
-    [Header("移動方法")]public int pattern; //1=左に移動, 2=右に移動
+    [Header("移動方法")]public int pattern; //1=上に移動, 2=下に移動, 3=左に移動, 4=右に移動
     //[Header("yarareSE")]public AudioClip yarareSE;
     
 
@@ -50,10 +50,14 @@ public class enemyoffly2 : MonoBehaviour
             Destroy(gameObject, 1.5f);
         }
         //移動させる 
-        if(pattern==1){//左に移動
+        if(pattern==1){//上に移動
+            this.transform.position = new Vector3(objPosition.x,　Time.time + objPosition.y, objPosition.z );
+        }else if(pattern==2){//下に移動
+            this.transform.position = new Vector3(objPosition.x, -Time.time + objPosition.y, objPosition.z );
+        }else if(pattern==3){//左に移動
             this.transform.position = new Vector3(-Time.time + objPosition.x, objPosition.y, objPosition.z );
-        }else if(pattern==2){//右に移動
-            this.transform.position = new Vector3(Time.time * 2.0f + objPosition.x, objPosition.y, objPosition.z );
+        }else if(pattern==4){//右に移動
+            this.transform.position = new Vector3(Time.time + objPosition.x, objPosition.y, objPosition.z );
         }
     }
     
