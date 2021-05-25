@@ -5,7 +5,7 @@ using UnityEngine;
 public class biyoon : MonoBehaviour
 {
     public GameObject hantei;
-
+    public player p;
     private Vector3 size =new Vector3 (1.0f,1.0f,1.0f);
     private float length =1.0f;
     private bool hookedornot=false;
@@ -37,7 +37,7 @@ public class biyoon : MonoBehaviour
 
         //クリックされたら伸ばす
         
-        if (Input.GetMouseButton(0)&&clicked){
+        if (!p.isDown&&Input.GetMouseButton(0)&&clicked){
             if(!hookcheck.isHooked){
                 length+=Time.deltaTime*nobiruspeed;
                 this.transform.localScale=new Vector3 (1.0f,length,1.0f);

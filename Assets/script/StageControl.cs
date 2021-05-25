@@ -7,9 +7,9 @@ public class StageControl : MonoBehaviour
 {
     [Header("ゲームオブジェクト")]public GameObject playerobj;
     [Header("コンティニュー位置")]public GameObject[] continuepoint;
-    [Header("ステージクリアSE")]public AudioClip stageclearSE;
+    //[Header("ステージクリアSE")]public AudioClip stageclearSE;
     public GameObject bgmplayer;
-    private AudioSource bgm=null;        
+    //private AudioSource bgm=null;        
     private player p;
     private int nextStageNum;
     private bool StartStageChange=false;
@@ -18,7 +18,7 @@ public class StageControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        bgm=bgmplayer.GetComponent<AudioSource>();
+        //bgm=bgmplayer.GetComponent<AudioSource>();
       if(playerobj !=null&&continuepoint!=null&&continuepoint.Length>0){
           
           p=playerobj.GetComponent<player>();
@@ -36,11 +36,11 @@ public class StageControl : MonoBehaviour
     
     void Update()
     {
-        if(p!=null&& false)//プレイヤーからコンティニューを受け取る
+        if(p!=null&& p.isDownDone())//プレイヤーからコンティニューを受け取る
         {
             if(continuepoint.Length>GameManager.instance.respawnnum){
                 playerobj.transform.position=continuepoint[GameManager.instance.respawnnum].transform.position;
-                //p.ContinuePlayer();
+                p.ContinuePlayer();
             }
             else{
                 Debug.Log("コンティニューポイントの設定が足りないよ");
@@ -76,8 +76,8 @@ public class StageControl : MonoBehaviour
     }
     public void StageClear(){
         GameManager.instance.respawnnum=0;
-        GameManager.instance.isStageClear=true;
-        bgm.Stop();
-        GameManager.instance.PlaySE(stageclearSE);
+        //GameManager.instance.isStageClear=true;
+        //bgm.Stop();
+        //GameManager.instance.PlaySE(stageclearSE);
     }
 }
