@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class enemyoffly2 : MonoBehaviour
+public class enemyofippou : MonoBehaviour
 {
     [Header("攻撃オブジェクト")] public GameObject fire;
     [Header("攻撃間隔")]public float interval;
     [Header("ライフ")]public int life=1;
     [Header("移動方法")]public int pattern; //1=上に移動, 2=下に移動, 3=左に移動, 4=右に移動
+    [Header("移動速度")]public float speed;
     //[Header("yarareSE")]public AudioClip yarareSE;
     
 
@@ -18,7 +19,7 @@ public class enemyoffly2 : MonoBehaviour
     private Rigidbody2D rb=null;
     private BoxCollider2D col =null;
     private bool isDead=false;
-    Vector3 objPosition; // オブジェクトの位置を記録
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -32,8 +33,6 @@ public class enemyoffly2 : MonoBehaviour
               Destroy(this.gameObject);
           }
           
-          // 最初に置かれた場所を代入 
-        objPosition = this.transform.position;
     }
 
     // Update is called once per frame
@@ -51,16 +50,20 @@ public class enemyoffly2 : MonoBehaviour
         }
         //移動させる 
         if(pattern==1){//上に移動
-            this.transform.position = new Vector3(objPosition.x,　Time.time + objPosition.y, objPosition.z );
+            transform.localScale = new Vector2(1, 1);
+            rb.velocity = new Vector2(0, 1.0f * speed);
         }else if(pattern==2){//下に移動
-            this.transform.position = new Vector3(objPosition.x, -Time.time + objPosition.y, objPosition.z );
+            transform.localScale = new Vector2(1, 1);
+            rb.velocity = new Vector2(0, -1.0f * speed);
         }else if(pattern==3){//左に移動
-            this.transform.position = new Vector3(-Time.time + objPosition.x, objPosition.y, objPosition.z );
+            transform.localScale = new Vector2(1, 1);
+            rb.velocity = new Vector2(-1.0f * speed, 0);
         }else if(pattern==4){//右に移動
-            this.transform.position = new Vector3(Time.time + objPosition.x, objPosition.y, objPosition.z );
+            transform.localScale = new Vector2(-1, 1);
+            rb.velocity = new Vector2(1.0f * speed, 0);
         }
+             
     }
-    
     private void OnTriggerEnter2D(Collider2D collision) {
         //弾に当たったらライフがへる
         if(collision.tag=="yourbullet"){
