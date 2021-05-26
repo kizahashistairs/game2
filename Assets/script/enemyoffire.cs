@@ -67,6 +67,7 @@ public class enemyoffire : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision) {
         //弾に当たったらライフがへる
         if(collision.tag=="yourbullet"){
+            Destroy(collision.gameObject);
             life--;
             //playSE(弾が当たったSE)
         }

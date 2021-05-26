@@ -10,9 +10,14 @@ public class player : MonoBehaviour
     [Header("床判定")]public GroundCheck g;
     public Vector3 toCursor;
     public bool isDown=false;
+    [Header("ジャンプ力")]public float jumpryoku=3.0f;
+    [Header("フックの引力")]public float hookpower=3.0f;
+    [Header("フックによる加速表現")]public AnimationCurve Hookspeedcurve;
 
     private Rigidbody2D rb=null; 
     private Animator anim=null;
+    private bool pOnGround=false;
+    private float hookTimer=0.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -35,14 +40,26 @@ public class player : MonoBehaviour
         Quaternion rot = Quaternion.FromToRotation (Vector3.up, toCursor);
 
         if(h.isHooked){
+            hookTimer+=Time.deltaTime;
             Vector2 hookForce=h.hookedposition-this.transform.position;
-            rb.AddForce(hookForce*1.2f);
+            rb.AddForce(hookForce*hookpower*Hookspeedcurve.Evaluate(hookTimer));
             Debug.Log(hookForce);
         }
 
         if(Input.GetMouseButtonDown(1)){
             shot(rot);
+            hookTimer=0.0f;
         }
+        pOnGround=g.OnGround();//接地判定
+        /// <summary>
+        /// ジャンプキー入力
+        /// </summary>
+        /// <value></value>
+        if(Input.GetKeyDown("w")&&pOnGround){
+            Jump();
+        }
+        // 自滅用
+        if(Input.GetKey(KeyCode.Escape))RecieveDamage();
     }
     void shot(Quaternion r){
         GameObject g = Instantiate(bullet);
@@ -75,6 +92,13 @@ public class player : MonoBehaviour
             }
         }
         return false;
+    }
+    /// <summary>
+    /// ジャンプ
+    /// </summary>
+    private void Jump(){
+        rb.velocity=new Vector2(rb.velocity.x,jumpryoku);
+        //PlaySE("JumpSE");
     }
     public void ContinuePlayer(){
         isDown=false;
