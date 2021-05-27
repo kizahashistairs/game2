@@ -8,6 +8,7 @@ public class player : MonoBehaviour
     [Header("ターゲットオブジェクト（マウスカーソル）")] public GameObject target;
     [Header("フックの部分")] public hookcheck h;
     [Header("床判定")]public GroundCheck g;
+    [Header("銃を撃った時のSE")]public AudioClip ShotSE;
     public Vector3 toCursor;
     public bool isDown=false;
     [Header("ジャンプ力")]public float jumpryoku=3.0f;
@@ -22,6 +23,7 @@ public class player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+                    GameManager.instance.PlaySE(ShotSE);
         //コンポーネントを捕まえる
         rb = GetComponent<Rigidbody2D>();
         anim= GetComponent<Animator>(); 
@@ -45,10 +47,13 @@ public class player : MonoBehaviour
             rb.AddForce(hookForce*hookpower*Hookspeedcurve.Evaluate(hookTimer));
             Debug.Log(hookForce);
         }
-
+        if(Input.GetMouseButtonDown(0)){
+            hookTimer=0.0f;   
+        }
+        /// 銃弾を飛ばす
         if(Input.GetMouseButtonDown(1)){
             shot(rot);
-            hookTimer=0.0f;
+            GameManager.instance.PlaySE(ShotSE);
         }
         pOnGround=g.OnGround();//接地判定
         /// <summary>
@@ -72,7 +77,7 @@ public class player : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision) {
         if(collision.tag =="sokushi"){
             Debug.Log("死");
-            //playSE("yarareSE");
+            //playSE(yarareSE);
             RecieveDamage();
         }
     }
