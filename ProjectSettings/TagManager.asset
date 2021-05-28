@@ -8,6 +8,7 @@ TagManager:
   - yourbullet
   - sokushi
   - enemy
+  - hookable
   layers:
   - Default
   - TransparentFX

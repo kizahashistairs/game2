@@ -12,12 +12,14 @@ public class player : MonoBehaviour
     public Vector3 toCursor;
     public bool isDown=false;
     [Header("ジャンプ力")]public float jumpryoku=3.0f;
+    [Header("移動速度b")]public float speed=1.0f;
     [Header("フックの引力")]public float hookpower=3.0f;
     [Header("フックによる加速表現")]public AnimationCurve Hookspeedcurve;
 
     private Rigidbody2D rb=null; 
     private Animator anim=null;
-    private bool pOnGround=false;
+    [Header("マウスカーソルの方向")]private Quaternion rot;
+    public bool pOnGround=false;
     private float hookTimer=0.0f;
 
     // Start is called before the first frame update
@@ -35,18 +37,34 @@ public class player : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void FixedUpdate(){
         //マウスカーソルの方向を取得
         toCursor = (target.transform.position - this.transform.position);
-        Quaternion rot = Quaternion.FromToRotation (Vector3.up, toCursor);
+        rot = Quaternion.FromToRotation (Vector3.up, toCursor);
 
         if(h.isHooked){
             hookTimer+=Time.deltaTime;
             Vector2 hookForce=h.hookedposition-this.transform.position;
+            hookForce+=new Vector2 (-hookForce.x/4,hookForce.y/4);
             rb.AddForce(hookForce*hookpower*Hookspeedcurve.Evaluate(hookTimer));
             Debug.Log(hookForce);
         }
+        if(Input.GetAxis("Horizontal")>0){
+            Vector2 idouForce=new Vector2 (Input.GetAxis("Horizontal")*speed,0);
+            if(rb.velocity.x>1.5&&rb.velocity.x<=2&&!h.isHooked){rb.velocity=new Vector2(2,rb.velocity.y);}
+            else if(rb.velocity.x>2){rb.AddForce(idouForce/8);}
+            else {rb.AddForce(idouForce);}
+        }
+        if(Input.GetAxis("Horizontal")<0){
+            Vector2 idouForce=new Vector2 (Input.GetAxis("Horizontal")*speed,0);
+            if(rb.velocity.x>-2&&rb.velocity.x<-1.5&&!h.isHooked){rb.velocity=new Vector2(-2,rb.velocity.y);}
+            else if(rb.velocity.x<-2){rb.AddForce(idouForce/8);}
+            else {rb.AddForce(idouForce);}
+        }
+    }
+    void Update()
+    {
+        
         if(Input.GetMouseButtonDown(0)){
             hookTimer=0.0f;   
         }

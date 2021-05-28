@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 public class hookcheck : MonoBehaviour
 {
     public bool isHooked =false;
     public Vector3 hookedposition;
     public GameObject saki;
-    private string hookable ="ground";
+    //private string hookable ="ground";
+    [Header("hookable")]private string[] hookable={"ground","hookable"};
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +22,7 @@ public class hookcheck : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision){
                 Debug.Log("c");
-                if(collision.tag==hookable){
+                if(hookable.Contains(collision.tag)){
                     if(!isHooked){
                         saki.SetActive(true);
                         saki.transform.position=this.transform.position;
