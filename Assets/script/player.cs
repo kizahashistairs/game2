@@ -6,7 +6,7 @@ public class player : MonoBehaviour
 {
     [Header("弾丸")]public GameObject bullet;
     [Header("ターゲットオブジェクト（マウスカーソル）")] public GameObject target;
-    [Header("フックの部分")] public hookcheck h;
+    [Header("フックの部分")] public GameObject hook;
     [Header("床判定")]public GroundCheck g;
     [Header("銃を撃った時のSE")]public AudioClip ShotSE;
     public Vector3 toCursor;
@@ -18,6 +18,8 @@ public class player : MonoBehaviour
 
     private Rigidbody2D rb=null; 
     private Animator anim=null;
+    private hookshot h=null;
+    //private LineRenderer line;//線を結ぶためのやつ
     [Header("マウスカーソルの方向")]private Quaternion rot;
     public bool pOnGround=false;
     private float hookTimer=0.0f;
@@ -28,7 +30,9 @@ public class player : MonoBehaviour
                     GameManager.instance.PlaySE(ShotSE);
         //コンポーネントを捕まえる
         rb = GetComponent<Rigidbody2D>();
-        anim= GetComponent<Animator>(); 
+        anim= GetComponent<Animator>();
+        h=hook.GetComponent<hookshot>(); 
+        //line=GetComponent<LineRenderer>();
 
 
         //エラー処理
@@ -42,24 +46,34 @@ public class player : MonoBehaviour
         toCursor = (target.transform.position - this.transform.position);
         rot = Quaternion.FromToRotation (Vector3.up, toCursor);
 
+        //hookが引っ掛かっているときの移動
         if(h.isHooked){
+            pOnGround=false;
             hookTimer+=Time.deltaTime;
             Vector2 hookForce=h.hookedposition-this.transform.position;
-            hookForce+=new Vector2 (-hookForce.x/4,hookForce.y/4);
+            if(hookForce.magnitude<0.2f){
+                rb.AddForce(-0.7f*Physics.gravity);
+                rb.velocity=0.9f*rb.velocity;
+                hookForce+=new Vector2 (Input.GetAxis("Horizontal")/4-hookForce.x/10,-hookForce.y);
+                }
+            else{hookForce+=new Vector2 (Input.GetAxis("Horizontal")/4-hookForce.x/6,hookForce.y/4);}
             rb.AddForce(hookForce*hookpower*Hookspeedcurve.Evaluate(hookTimer));
             Debug.Log(hookForce);
         }
+        //hookに引っ掛かっていないときの移動
+        else{
         if(Input.GetAxis("Horizontal")>0){
             Vector2 idouForce=new Vector2 (Input.GetAxis("Horizontal")*speed,0);
-            if(rb.velocity.x>1.5&&rb.velocity.x<=2&&!h.isHooked){rb.velocity=new Vector2(2,rb.velocity.y);}
+            if(rb.velocity.x>1.5&&rb.velocity.x<=2){rb.velocity=new Vector2(2,rb.velocity.y);}
             else if(rb.velocity.x>2){rb.AddForce(idouForce/8);}
             else {rb.AddForce(idouForce);}
         }
         if(Input.GetAxis("Horizontal")<0){
             Vector2 idouForce=new Vector2 (Input.GetAxis("Horizontal")*speed,0);
-            if(rb.velocity.x>-2&&rb.velocity.x<-1.5&&!h.isHooked){rb.velocity=new Vector2(-2,rb.velocity.y);}
+            if(rb.velocity.x>-2&&rb.velocity.x<-1.5){rb.velocity=new Vector2(-2,rb.velocity.y);}
             else if(rb.velocity.x<-2){rb.AddForce(idouForce/8);}
             else {rb.AddForce(idouForce);}
+        }
         }
     }
     void Update()
@@ -70,8 +84,11 @@ public class player : MonoBehaviour
         }
         /// 銃弾を飛ばす
         if(Input.GetMouseButtonDown(1)){
-            shot(rot);
+            shotb(rot);
             GameManager.instance.PlaySE(ShotSE);
+        }
+        if(Input.GetMouseButtonDown(0)){
+            shoth(rot);
         }
         pOnGround=g.OnGround();//接地判定
         /// <summary>
@@ -84,12 +101,18 @@ public class player : MonoBehaviour
         // 自滅用
         if(Input.GetKey(KeyCode.Escape))RecieveDamage();
     }
-    void shot(Quaternion r){
+    void shotb(Quaternion r){
         GameObject g = Instantiate(bullet);
         
         g.transform.localRotation=r;
         g.transform.position=this.transform.position;
         g.SetActive(true);
+    }
+    void shoth(Quaternion r){
+        hook.transform.localRotation=r;
+        hook.transform.position=this.transform.position;
+        hook.SetActive(true);
+        h.shot(toCursor.normalized,this.transform.position);
     }
     
     private void OnTriggerEnter2D(Collider2D collision) {
