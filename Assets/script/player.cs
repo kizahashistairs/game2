@@ -44,6 +44,7 @@ public class player : MonoBehaviour
     void FixedUpdate(){
         //マウスカーソルの方向を取得
         toCursor = (target.transform.position - this.transform.position);
+        toCursor.Normalize();
         rot = Quaternion.FromToRotation (Vector3.up, toCursor);
 
         //hookが引っ掛かっているときの移動
@@ -51,15 +52,31 @@ public class player : MonoBehaviour
             pOnGround=false;
             hookTimer+=Time.deltaTime;
             Vector2 hookForce=h.hookedposition-this.transform.position;
-            if(hookForce.magnitude<0.2f){
+            Vector2 yoko=new Vector2 (Input.GetAxis("Horizontal"),0f);
+            if(hookForce.magnitude<1.0f){
+                yoko/=6;
                 rb.AddForce(-0.7f*Physics.gravity);
-                rb.velocity=0.9f*rb.velocity;
-                hookForce+=new Vector2 (Input.GetAxis("Horizontal")/4-hookForce.x/10,-hookForce.y);
+                hookForce+=new Vector2 (Input.GetAxis("Horizontal")/6-hookForce.x*0.8f,hookForce.y/2);
+                rb.velocity=0.95f*rb.velocity;
+                rb.AddForce(5*hookForce);
                 }
-            else{hookForce+=new Vector2 (Input.GetAxis("Horizontal")/4-hookForce.x/6,hookForce.y/4);}
-            rb.AddForce(hookForce*hookpower*Hookspeedcurve.Evaluate(hookTimer));
+            else if(target.transform.position.y - this.transform.position.y<1.0f){
+                rb.AddForce(-0.5f*Physics.gravity);
+                hookForce+=new Vector2 (Input.GetAxis("Horizontal")/4-hookForce.x/2,hookForce.y/4);
+                rb.velocity+=hookpower*hookForce.normalized*Hookspeedcurve.Evaluate(hookTimer)/2;
+                yoko/=4;
+            }
+            else{
+                hookForce+=new Vector2 (Input.GetAxis("Horizontal")/4-hookForce.x/4,hookForce.y/4);
+                rb.velocity+=hookpower*hookForce.normalized*Hookspeedcurve.Evaluate(hookTimer)/2;
+                yoko/=4;
+                }
             Debug.Log(hookForce);
-        }
+            rb.AddForce(yoko);
+            //rb.AddForce(hookForce*hookpower*Hookspeedcurve.Evaluate(hookTimer));
+            }
+        
+        
         //hookに引っ掛かっていないときの移動
         else{
         if(Input.GetAxis("Horizontal")>0){
@@ -112,7 +129,7 @@ public class player : MonoBehaviour
         hook.transform.localRotation=r;
         hook.transform.position=this.transform.position;
         hook.SetActive(true);
-        h.shot(toCursor.normalized,this.transform.position);
+        h.shot(toCursor,this.transform.position);
     }
     
     private void OnTriggerEnter2D(Collider2D collision) {

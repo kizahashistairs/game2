@@ -22,7 +22,7 @@ public class playerbullet : MonoBehaviour
               Destroy(this.gameObject);
           }
           defaultPos = transform.position;
-          muki=p.toCursor;
+          muki=p.toCursor*speed;
           rb.velocity=muki;
 
      }
