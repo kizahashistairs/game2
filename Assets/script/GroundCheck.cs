@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,6 +23,11 @@ public class GroundCheck : MonoBehaviour
         onGroundExit=false;
         onGroundStay=false;
         return onGround;
+    }
+    public void notOnGround(){
+        onGroundEnter=false;
+        onGroundStay=false;
+        onGround=false;
     }
     private void OnTriggerEntre2D(Collider2D collision){
         if(collision.tag ==groundTag){

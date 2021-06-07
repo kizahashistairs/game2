@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 public class player : MonoBehaviour
 {
     [Header("弾丸")]public GameObject bullet;
@@ -9,16 +9,20 @@ public class player : MonoBehaviour
     [Header("フックの部分")] public GameObject hook;
     [Header("床判定")]public GroundCheck g;
     [Header("銃を撃った時のSE")]public AudioClip ShotSE;
+    [Header("フックショットSE")]public AudioClip HookShotSE;
+    [Header("やられSE")]public AudioClip yarareSE;
+    [Header("ジャンプSE")]public AudioClip JumpSE;
     public Vector3 toCursor;
     public bool isDown=false;
     [Header("ジャンプ力")]public float jumpryoku=3.0f;
     [Header("移動速度b")]public float speed=1.0f;
-    [Header("フックの引力")]public float hookpower=3.0f;
+    [Header("フックの引力")]public float hookpower=0.8f;
     [Header("フックによる加速表現")]public AnimationCurve Hookspeedcurve;
 
     private Rigidbody2D rb=null; 
     private Animator anim=null;
     private hookshot h=null;
+    private string[] sokushitag={"sokushi","sokushihookable","sokushienemy"};//触れたら死ぬやつ    
     //private LineRenderer line;//線を結ぶためのやつ
     [Header("マウスカーソルの方向")]private Quaternion rot;
     public bool pOnGround=false;
@@ -46,13 +50,13 @@ public class player : MonoBehaviour
         toCursor = (target.transform.position - this.transform.position);
         toCursor.Normalize();
         rot = Quaternion.FromToRotation (Vector3.up, toCursor);
-
         //hookが引っ掛かっているときの移動
         if(h.isHooked){
-            pOnGround=false;
-            hookTimer+=Time.deltaTime;
-            Vector2 hookForce=h.hookedposition-this.transform.position;
-            Vector2 yoko=new Vector2 (Input.GetAxis("Horizontal"),0f);
+            g.notOnGround();
+            hookTimer+=Time.deltaTime;//hookを発射してからの時間
+            Vector2 hookForce=h.hookedposition-this.transform.position;//フックとの位置関係
+            Vector2 yoko=new Vector2 (Input.GetAxis("Horizontal"),0f);//キーボード左右入力
+            //フックが近いとき
             if(hookForce.magnitude<1.0f){
                 yoko/=6;
                 rb.AddForce(-0.7f*Physics.gravity);
@@ -60,18 +64,20 @@ public class player : MonoBehaviour
                 rb.velocity=0.95f*rb.velocity;
                 rb.AddForce(5*hookForce);
                 }
+            //高さの距離が近いとき
             else if(target.transform.position.y - this.transform.position.y<1.0f){
                 rb.AddForce(-0.5f*Physics.gravity);
                 hookForce+=new Vector2 (Input.GetAxis("Horizontal")/4-hookForce.x/2,hookForce.y/4);
                 rb.velocity+=hookpower*hookForce.normalized*Hookspeedcurve.Evaluate(hookTimer)/2;
                 yoko/=4;
             }
+            //基本
             else{
                 hookForce+=new Vector2 (Input.GetAxis("Horizontal")/4-hookForce.x/4,hookForce.y/4);
                 rb.velocity+=hookpower*hookForce.normalized*Hookspeedcurve.Evaluate(hookTimer)/2;
                 yoko/=4;
                 }
-            Debug.Log(hookForce);
+            //Debug.Log(hookForce);
             rb.AddForce(yoko);
             //rb.AddForce(hookForce*hookpower*Hookspeedcurve.Evaluate(hookTimer));
             }
@@ -81,14 +87,14 @@ public class player : MonoBehaviour
         else{
         if(Input.GetAxis("Horizontal")>0){
             Vector2 idouForce=new Vector2 (Input.GetAxis("Horizontal")*speed,0);
-            if(rb.velocity.x>1.5&&rb.velocity.x<=2){rb.velocity=new Vector2(2,rb.velocity.y);}
-            else if(rb.velocity.x>2){rb.AddForce(idouForce/8);}
+            if(rb.velocity.x>0.3&&rb.velocity.x<=2.0f){rb.AddForce(idouForce*1.5f);}//rb.velocity=new Vector2(2,rb.velocity.y);}
+            else if(rb.velocity.x>2.6){rb.AddForce(idouForce/8);}
             else {rb.AddForce(idouForce);}
         }
         if(Input.GetAxis("Horizontal")<0){
             Vector2 idouForce=new Vector2 (Input.GetAxis("Horizontal")*speed,0);
-            if(rb.velocity.x>-2&&rb.velocity.x<-1.5){rb.velocity=new Vector2(-2,rb.velocity.y);}
-            else if(rb.velocity.x<-2){rb.AddForce(idouForce/8);}
+            if(rb.velocity.x>-2&&rb.velocity.x<0.3){rb.AddForce(idouForce*1.5f);}//rb.velocity=new Vector2(-3,rb.velocity.y);}
+            else if(rb.velocity.x<-2.6){rb.AddForce(idouForce/8);}
             else {rb.AddForce(idouForce);}
         }
         }
@@ -100,11 +106,11 @@ public class player : MonoBehaviour
             hookTimer=0.0f;   
         }
         /// 銃弾を飛ばす
-        if(Input.GetMouseButtonDown(1)){
+        if(!isDown&&Input.GetMouseButtonDown(1)){
             shotb(rot);
-            GameManager.instance.PlaySE(ShotSE);
         }
-        if(Input.GetMouseButtonDown(0)){
+        //フックショットを飛ばす
+        if(!isDown&&Input.GetMouseButtonDown(0)){
             shoth(rot);
         }
         pOnGround=g.OnGround();//接地判定
@@ -112,28 +118,39 @@ public class player : MonoBehaviour
         /// ジャンプキー入力
         /// </summary>
         /// <value></value>
-        if(Input.GetKeyDown("w")&&pOnGround){
+        if(!isDown&&Input.GetKeyDown("w")&&pOnGround){
             Jump();
         }
         // 自滅用
         if(Input.GetKey(KeyCode.Escape))RecieveDamage();
     }
+    /// <summary>
+    /// 弾を発射するメソッド
+    /// 入力はカーソルへの向き
+    /// </summary>
+    /// <value></value>
     void shotb(Quaternion r){
         GameObject g = Instantiate(bullet);
-        
+        GameManager.instance.PlaySE(ShotSE);
         g.transform.localRotation=r;
         g.transform.position=this.transform.position;
         g.SetActive(true);
-    }
+    }    
+    /// <summary>
+    /// フックショットを発射するメソッド
+    /// 入力はカーソルへの向き
+    /// </summary>
+    /// <value></value>
     void shoth(Quaternion r){
+        GameManager.instance.PlaySE(HookShotSE);
         hook.transform.localRotation=r;
         hook.transform.position=this.transform.position;
         hook.SetActive(true);
         h.shot(toCursor,this.transform.position);
     }
-    
+    //触れたら死ぬやつにふれたかどうか
     private void OnTriggerEnter2D(Collider2D collision) {
-        if(collision.tag =="sokushi"){
+        if(sokushitag.Contains(collision.tag)){
             Debug.Log("死");
             //playSE(yarareSE);
             RecieveDamage();
@@ -160,8 +177,9 @@ public class player : MonoBehaviour
     /// ジャンプ
     /// </summary>
     private void Jump(){
+        g.notOnGround();
         rb.velocity=new Vector2(rb.velocity.x,jumpryoku);
-        //PlaySE("JumpSE");
+        GameManager.instance.PlaySE(JumpSE);
     }
     public void ContinuePlayer(){
         isDown=false;

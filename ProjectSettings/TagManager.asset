@@ -9,6 +9,8 @@ TagManager:
   - sokushi
   - enemy
   - hookable
+  - sokushihookable
+  - sokushienemy
   layers:
   - Default
   - TransparentFX
@@ -45,6 +47,9 @@ TagManager:
   m_SortingLayers:
   - name: biyo-n
     uniqueID: 282387133
+    locked: 0
+  - name: oku
+    uniqueID: 3197428853
     locked: 0
   - name: Default
     uniqueID: 0

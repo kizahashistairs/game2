@@ -7,7 +7,7 @@ public class playerbullet : MonoBehaviour
     [Header("スピード")]public float speed =3.0f;
     [Header("最大距離")]public float maxDistance=100f;
     public player p;
-    [Header("当たったら消える対象")]public string[] kabe={"ground"};
+    [Header("当たったら消える対象")]public string[] kabe={"ground","sokushihookable"};
 
     private Vector3 defaultPos;
     private Vector3 muki;

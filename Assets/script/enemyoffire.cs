@@ -41,6 +41,7 @@ public class enemyoffire : MonoBehaviour
         AnimatorStateInfo currentState =anim.GetCurrentAnimatorStateInfo(0);
         
         if(currentState.IsName("idle")){
+            //インターバルを置いて攻撃するアニメーションを再生
             if(timer>interval){
             anim.SetTrigger("attack");
             timer=0.0f;
@@ -57,6 +58,7 @@ public class enemyoffire : MonoBehaviour
             Destroy(gameObject, 1.5f);
         }
     }
+    //弾を放出
     public void attack(){
         GameObject g=Instantiate(fire);
         g.transform.SetParent(transform);

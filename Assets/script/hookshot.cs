@@ -10,12 +10,14 @@ public class hookshot : MonoBehaviour
     [Header("スピード")]public float speed =7.5f;
     [Header("最大距離")]public float maxtime=0.8f;
     public player p;
-    [Header("hookable")]private string[] hookable={"ground","hookable"};
+    private string[] hookable={"ground","hookable","sokushihookable"};//hookをかけられるタグ
 
     private Vector3 defaultPos;
     private Vector2 defaultspeed;
     private Rigidbody2D rb;
     private Rigidbody2D prb;
+    private GameObject hookedObject;
+    public Rigidbody2D hookedrb;
     private LineRenderer line;//線を結ぶためのやつ
     private float timer=0.0f;
     private bool clicked=true;
@@ -53,7 +55,16 @@ public class hookshot : MonoBehaviour
                 var kansei=prb.velocity/2;
                 rb.velocity=defaultspeed+kansei;
             }
-            if(isHooked){rb.velocity=new Vector2 (0,0);}
+            if(isHooked){
+                //hookをひっかけているものが動くなら、フックも動かす
+                if(hookedrb==null){rb.velocity=new Vector2 (0,0);}
+                else{
+                    Debug.Log(hookedrb.velocity);
+                    rb.velocity=hookedrb.velocity;
+                    hookedposition=this.transform.position;
+                    }
+                if(hookedObject==null){modosu();}
+                }
             if(timer>maxtime){
                 clicked=false;
                 modosu();
@@ -71,6 +82,10 @@ public class hookshot : MonoBehaviour
                         saki.SetActive(true);
                         saki.transform.position=this.transform.position;
                         hookedposition=this.transform.position;
+                        hookedObject=collision.gameObject;
+                        if(hookedObject.GetComponent<Rigidbody2D>()!=null){
+                            hookedrb=hookedObject.GetComponent<Rigidbody2D>();
+                        }
                         isHooked =true;
                         }
                     
