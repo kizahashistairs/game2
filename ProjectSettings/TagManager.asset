@@ -11,6 +11,7 @@ TagManager:
   - hookable
   - sokushihookable
   - sokushienemy
+  - cannothook
   layers:
   - Default
   - TransparentFX

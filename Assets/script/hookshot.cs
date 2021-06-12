@@ -11,6 +11,7 @@ public class hookshot : MonoBehaviour
     [Header("最大距離")]public float maxtime=0.8f;
     public player p;
     private string[] hookable={"ground","hookable","sokushihookable"};//hookをかけられるタグ
+    private string[] cannothook={"cannothook"};//hookをかけられるタグ
 
     private Vector3 defaultPos;
     private Vector2 defaultspeed;
@@ -89,6 +90,9 @@ public class hookshot : MonoBehaviour
                         isHooked =true;
                         }
                     
+                }
+                else if(cannothook.Contains(collision.tag)){
+                    modosu();
                 }
     }
     //フックを戻すメソッド
