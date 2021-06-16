@@ -30,19 +30,19 @@ public class GroundCheck : MonoBehaviour
         onGround=false;
     }
     private void OnTriggerEntre2D(Collider2D collision){
-        if(collision.tag ==groundTag){
+        if(collision.tag ==groundTag||collision.tag=="cannothook"){
             onGroundEnter=true;
         }
         
     }
     private void OnTriggerStay2D(Collider2D collision){
-        if(collision.tag ==groundTag){
+        if(collision.tag ==groundTag||collision.tag=="cannothook"){
             //Debug.Log("何かが判定に入っています");
             onGroundStay=true;
         }
     }
     private void OnTriggerExit2D(Collider2D collision){
-        if(collision.tag ==groundTag){
+        if(collision.tag ==groundTag||collision.tag=="cannothook"){
             onGroundExit=true;
         }
     }

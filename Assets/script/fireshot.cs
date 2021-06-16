@@ -38,6 +38,9 @@ public class fireshot : MonoBehaviour
               if(mukix>0){
                   transform.localScale = new Vector3(-size, size, size);
               }
+              else{
+                  transform.localScale = new Vector3(size, size, size);
+              }
           }
      }
 
