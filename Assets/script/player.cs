@@ -85,6 +85,7 @@ public class player : MonoBehaviour
         
         //hookに引っ掛かっていないときの移動
         else{
+            if(!GameManager.instance.isStageClear){//クリアしていないときのみ移動可能
         if(Input.GetAxis("Horizontal")>0){
             Vector2 idouForce=new Vector2 (Input.GetAxis("Horizontal")*speed,0);
             if(rb.velocity.x>0.3&&rb.velocity.x<=2.0f){rb.AddForce(idouForce*1.5f);}//rb.velocity=new Vector2(2,rb.velocity.y);}
@@ -98,19 +99,20 @@ public class player : MonoBehaviour
             else {rb.AddForce(idouForce);}
         }
         }
+        }
     }
     void Update()
     {
         
-        if(Input.GetMouseButtonDown(0)){
+        if(!GameManager.instance.isStageClear&&Input.GetMouseButtonDown(0)){
             hookTimer=0.0f;   
         }
         /// 銃弾を飛ばす
-        if(!isDown&&Input.GetMouseButtonDown(1)){
+        if(!GameManager.instance.isStageClear&&!isDown&&Input.GetMouseButtonDown(1)){
             shotb(rot);
         }
         //フックショットを飛ばす
-        if(!isDown&&Input.GetMouseButtonDown(0)){
+        if(!GameManager.instance.isStageClear&&!isDown&&Input.GetMouseButtonDown(0)){
             shoth(rot);
         }
         pOnGround=g.OnGround();//接地判定
@@ -118,11 +120,11 @@ public class player : MonoBehaviour
         /// ジャンプキー入力
         /// </summary>
         /// <value></value>
-        if(!isDown&&Input.GetKeyDown("w")&&pOnGround){
+        if(!GameManager.instance.isStageClear&&!isDown&&(Input.GetKeyDown("w")||Input.GetKeyDown(KeyCode.UpArrow))&&pOnGround){
             Jump();
         }
         // 自滅用
-        if(Input.GetKey(KeyCode.Escape))RecieveDamage();
+        if(!GameManager.instance.isStageClear&&Input.GetKey(KeyCode.Escape))RecieveDamage();
     }
     /// <summary>
     /// 弾を発射するメソッド
@@ -161,6 +163,7 @@ public class player : MonoBehaviour
         isDown=true;
         anim.Play("player_tiun");
         rb.velocity=new Vector2 (0,0);
+        GameManager.instance.PlaySE(yarareSE);
     }
     public bool isDownDone(){
         if(anim!=null){

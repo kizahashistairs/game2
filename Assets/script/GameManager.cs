@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public int missnum=0;
     public int respawnnum;
     public bool slow =false;
-    [HideInInspector] public bool isStageClear;
+    [HideInInspector] public bool isStageClear=false;
 
     private AudioSource audioSource=null;
     // Start is called before the first frame update

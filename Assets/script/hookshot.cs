@@ -50,7 +50,7 @@ public class hookshot : MonoBehaviour
         line.SetPosition(0, this.transform.position);
         line.SetPosition(1, p.transform.position);
         }
-        if (!p.isDown&&Input.GetMouseButton(0)){
+        if (!GameManager.instance.isStageClear&&!p.isDown&&Input.GetMouseButton(0)){
             if(!isHooked){
                 timer+=Time.deltaTime; 
                 var kansei=prb.velocity/2;
@@ -101,6 +101,7 @@ public class hookshot : MonoBehaviour
         saki.SetActive(false);
         isHooked=false;
         line.enabled=false;
+        hookedrb=null;
         this.gameObject.SetActive(false);
         clicked=false;
         line.SetPosition(0, this.transform.position);
