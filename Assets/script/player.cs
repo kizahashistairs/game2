@@ -8,7 +8,7 @@ public class player : MonoBehaviour
     [Header("ターゲットオブジェクト（マウスカーソル）")] public GameObject target;
     [Header("フックの部分")] public GameObject hook;
     [Header("床判定")]public GroundCheck g;
-    [Header("銃を撃った時のSE")]public AudioClip ShotSE;
+    [Header("銃を撃った時のSE")]public AudioClip bulletSE;
     [Header("フックショットSE")]public AudioClip HookShotSE;
     [Header("やられSE")]public AudioClip yarareSE;
     [Header("ジャンプSE")]public AudioClip JumpSE;
@@ -18,7 +18,6 @@ public class player : MonoBehaviour
     [Header("移動速度b")]public float speed=1.0f;
     [Header("フックの引力")]public float hookpower=0.8f;
     [Header("フックによる加速表現")]public AnimationCurve Hookspeedcurve;
-
     private Rigidbody2D rb=null; 
     private Animator anim=null;
     private hookshot h=null;
@@ -31,7 +30,6 @@ public class player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-                    GameManager.instance.PlaySE(ShotSE);
         //コンポーネントを捕まえる
         rb = GetComponent<Rigidbody2D>();
         anim= GetComponent<Animator>();
@@ -133,7 +131,7 @@ public class player : MonoBehaviour
     /// <value></value>
     void shotb(Quaternion r){
         GameObject g = Instantiate(bullet);
-        GameManager.instance.PlaySE(ShotSE);
+        GameManager.instance.PlaySE(bulletSE);
         g.transform.localRotation=r;
         g.transform.position=this.transform.position;
         g.SetActive(true);
@@ -188,5 +186,8 @@ public class player : MonoBehaviour
         isDown=false;
         anim.Play("player");
         //GameManager.instance.PlaySE(respawnSE);
+    }
+    public void stopplayer(){
+        rb.velocity=new Vector2(0,0);
     }
 }

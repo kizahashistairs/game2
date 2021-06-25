@@ -6,6 +6,7 @@ public class ClearEffect : MonoBehaviour
 {
     [Header("拡大縮小のアニメーションカーブ")] public AnimationCurve curve;
     [Header("ステージコントローラー")] public StageControl ctrl;
+    [Header("クリア後タイトルに戻るかどうか")] public bool finishornot;
     private bool comp = false;     
     private float timer;
     // Start is called before the first frame update
@@ -26,8 +27,8 @@ public class ClearEffect : MonoBehaviour
                 transform.localScale=3*Vector3.one;
                 timer+=Time.deltaTime;
                 if(timer>1.5f){
-                ctrl.gotitle();
-                //ctrl.ChangeStage(GameManager.instance.stageNum+1);
+                if(finishornot){ctrl.gotitle();}
+                else{ctrl.ChangeStage(GameManager.instance.stageNum+1);}
                 comp = true;
                 }
             }

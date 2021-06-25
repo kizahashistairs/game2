@@ -78,6 +78,7 @@ public class StageControl : MonoBehaviour
     }
     /// <summary>
     /// ステージを切り替えます
+    ///クリアエフェクト完了後にクリアエフェクトで以下を呼ぶ
     /// </summary>
     /// <param name="num"></param>
     public void ChangeStage(int num){
@@ -94,8 +95,10 @@ public class StageControl : MonoBehaviour
             startFade=true;
         }
     }
+
     public void StageClear(){
         GameManager.instance.respawnnum=0;
+        p.stopplayer();
         stageclearobj.SetActive(true);
         foreach(GameObject i in kesuitem){
             i.SetActive(false);
