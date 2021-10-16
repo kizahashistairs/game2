@@ -46,11 +46,9 @@ MonoBehaviour:
   playerobj: {fileID: 0}
   continuepoint:
   - {fileID: 0}
-  - {fileID: 0}
   stageclearobj: {fileID: 0}
   fade: {fileID: 0}
-  kesuitem:
-  - {fileID: 0}
+  kesuitem: []
   stagecleartrigger: {fileID: 0}
   stageclearSE: {fileID: 8300000, guid: 387d9f9491ae72d4481e40693991aeb9, type: 3}
   bgmplayer: {fileID: 0}

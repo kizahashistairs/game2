@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 8
-  maxDistance: 25
+  maxDistance: 20
   p: {fileID: 8510923052685595743}
   kabe:
   - ground
@@ -207,7 +207,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.16
+  m_Radius: 0.15
 --- !u!1 &8510923052685595738
 GameObject:
   m_ObjectHideFlags: 0
