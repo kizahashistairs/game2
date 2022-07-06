@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,7 +28,7 @@ public class generatesomething : MonoBehaviour
     void FixedUpdate()
     {
 
-        if (sr.isVisible || nonVisibleAct){letsgenerate=true;} 
+        if (hani2.isVisible|| hani1.isVisible||sr.isVisible || nonVisibleAct){letsgenerate=true;} 
         else if(hani2check=true){
             if (hani2.isVisible||hani1.isVisible){letsgenerate=true;}
             else{letsgenerate=false;}
