@@ -27,7 +27,6 @@ public class StartButton : MonoBehaviour
     {
         if(!clickedthis){
         GameManager.instance.PlaySE(buttonSE);
-        GameManager.instance.stageNum=1;
         clickedthis=true;
         fade.StartFadeOut();
         }

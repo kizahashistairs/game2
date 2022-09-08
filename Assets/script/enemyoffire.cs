@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class enemyoffire : MonoBehaviour
 {
     [Header("攻撃オブジェクト")] public GameObject fire;
     [Header("攻撃間隔")]public float interval;
-    [Header("ライフ")]public int life=1;
+    [Header("ライフ")]public int life;
+    [Header("HPバー")]public HPbar HP;
     //[Header("yarareSE")]public AudioClip yarareSE;
     
 
@@ -24,6 +25,7 @@ public class enemyoffire : MonoBehaviour
         rb =GetComponent<Rigidbody2D>();
         anim =GetComponent<Animator>();
         col =GetComponent<BoxCollider2D>();
+        HP.SetMaxHP((float)life);
           if (anim == null || fire == null)
           {
               Debug.Log("設定が足りません");
@@ -66,12 +68,15 @@ public class enemyoffire : MonoBehaviour
         g.SetActive(true);
         //Debug.Log("attack");
     }
+    //弾に当たったら
     private void OnTriggerEnter2D(Collider2D collision) {
         //弾に当たったらライフがへる
         if(collision.tag=="yourbullet"){
             Destroy(collision.gameObject);
             life--;
+            HP.GetDamage(1);
             //playSE(弾が当たったSE)
         }
+
     }
 }

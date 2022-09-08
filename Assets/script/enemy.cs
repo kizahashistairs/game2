@@ -6,8 +6,9 @@ public class enemy : MonoBehaviour
 {
     //[Header("攻撃オブジェクト")] public GameObject fire;
     //[Header("攻撃間隔")]public float interval;
-    [Header("ライフ")]public int life=1;
+    [Header("ライフ")]public int life;
     [Header("死んでからどれくらいで消えるか")]public float deathtime=1.5f;
+    [Header("HPバー")]public HPbar HP;
     //[Header("yarareSE")]public AudioClip yarareSE;
     
 
@@ -23,6 +24,7 @@ public class enemy : MonoBehaviour
         rb =GetComponent<Rigidbody2D>();
         //anim =GetComponent<Animator>();
         col =GetComponent<BoxCollider2D>();
+        HP.SetMaxHP((float)life);
           if (rb == null )
           {
               Debug.Log("設定が足りません");
@@ -50,6 +52,7 @@ public class enemy : MonoBehaviour
         if(collision.tag=="yourbullet"){
             Destroy(collision.gameObject);
             life--;
+            HP.GetDamage(1);
             //playSE(弾が当たったSE)
         }
     }

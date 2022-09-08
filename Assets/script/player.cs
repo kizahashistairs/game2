@@ -44,10 +44,6 @@ public class player : MonoBehaviour
 
     // Update is called once per frame
     void FixedUpdate(){
-        //マウスカーソルの方向を取得
-        toCursor = (target.transform.position - this.transform.position);
-        toCursor.Normalize();
-        rot = Quaternion.FromToRotation (Vector3.up, toCursor);
         //hookが引っ掛かっているときの移動
         if(h.isHooked){
             g.notOnGround();
@@ -101,6 +97,10 @@ public class player : MonoBehaviour
     }
     void Update()
     {
+                //マウスカーソルの方向を取得
+        toCursor = (target.transform.position - this.transform.position);
+        toCursor.Normalize();
+        rot = Quaternion.FromToRotation (Vector3.up, toCursor);
         
         if(!GameManager.instance.isStageClear&&Input.GetMouseButtonDown(0)){
             hookTimer=0.0f;   
