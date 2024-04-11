@@ -6,14 +6,27 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance=null;
     [Header("スコア")]public int score;//実装するかは未定
-    [Header("ステージ番号")]public int stageNum=0;
+    [Header("ステージ番号")]public int stageNum;
     public int missnum=0;
     public int respawnnum;
-    public bool slow =false;
-    [HideInInspector] public bool isStageClear=false;
+    private bool isstageclear=false;
+    [HideInInspector] public bool isStageClear{
+         get{
+            return isstageclear;
+        }
+        set{
+            isstageclear = value;
+            Time.timeScale = 1.0f;
+            Time.fixedDeltaTime = 0.02f * Time.timeScale;
+
+        }
+       
+    }
+    private bool slowmode = false;
 
     private AudioSource audioSource=null;
-    // Start is called before the first frame update
+    private AudioSource ShortSESource;//途中でキャンセルしたいSE用のaudiosource
+
     private void Awake() {
         if(instance==null){
             instance=this;
@@ -25,31 +38,36 @@ public class GameManager : MonoBehaviour
 
     }
     private void Start() {
-        audioSource=GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
+        ShortSESource = gameObject.AddComponent<AudioSource>();
+        if(audioSource != null && ShortSESource != null){
+            ShortSESource.volume = audioSource.volume;//SEの音量は一緒にする
+        }
+        
     }
     private void Update(){
-        //キー入力でゲームスピードをゆっくりにする
-        if(Input.GetButtonDown("Jump")&&slow==false){
-            slow=true;
-            Time.timeScale = 0.5f;
-            //Unity内の時間が変わっても50fpsにしたいので0.02をかける
-            Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        }
-        if(Input.GetButtonUp("Jump")&&slow==true){
-            slow=false;
-            Time.timeScale = 1.0f;
-            Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        }
+        
     }
     public void plusmiss(){
         if (missnum<99){missnum++;}
     }
-    public void PlaySE(AudioClip clip){
+    public void PlaySE(AudioClip clip, float SEVolume = 1.0f){
         if(audioSource!=null){
-            audioSource.PlayOneShot(clip);
+            audioSource.PlayOneShot(clip, SEVolume);
         }
         else{
             Debug.Log("オーディオソースが設定されていません");
         }
+    }
+    public void PlayShortSE(AudioClip clip, float SEVolume = 1.0f){
+        if(ShortSESource!=null){
+            ShortSESource.PlayOneShot(clip , SEVolume);
+        }
+        else{
+            Debug.Log("オーディオソースが設定されていません");
+        }
+    }
+    public void StopShortSE(){
+         ShortSESource.Stop();
     }
 }

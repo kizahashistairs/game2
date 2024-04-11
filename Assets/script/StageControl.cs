@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement; 
 
 public class StageControl : MonoBehaviour
@@ -9,17 +10,22 @@ public class StageControl : MonoBehaviour
     [Header("コンティニュー位置")]public GameObject[] continuepoint;
     [Header("ステージクリア")] public GameObject stageclearobj;
     [Header("フェード")]public fadeimage fade;
+    [Header("タイマー")]public timer mytimer;
     [Header("クリア時に消すアイテム")]public GameObject[] kesuitem;
     [Header("ステージクリア判定")]public PlayerTriggerCheck stagecleartrigger;
     [Header("ステージクリアSE")]public AudioClip stageclearSE;
     public GameObject bgmplayer;
+    //[SerializeField] private Text cleartimetext;
     private AudioSource bgm=null;        
     private player p;
     private int nextStageNum;
     private bool startFade=false;
     private bool doSceneChange = false;
     private bool doClear=false;
-    private bool totitle=false;
+    
+    
+    [SerializeField]
+    [Header("クリアしたらタイトルに戻るか")]private bool totitle=false;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +47,9 @@ public class StageControl : MonoBehaviour
     
     void Update()
     {
+        if(Input.GetKeyDown("t")){
+            gotitle();
+        }
         if(p!=null&& p.isDownDone())//プレイヤーからコンティニューを受け取る
         {
             if(continuepoint.Length>GameManager.instance.respawnnum){
@@ -57,35 +66,48 @@ public class StageControl : MonoBehaviour
             doClear = true;
         }
         ///<summary>
-        /// ステージの切り替え
+        /// フェードアウトしたらステージの切り替え
         /// </summary>
+        
         if(fade!=null&&startFade&&!doSceneChange){
             Debug.Log("a");
             if(fade.IsFadeOutComp()){
-                GameManager.instance.stageNum = nextStageNum;
+            GameManager.instance.stageNum = nextStageNum;
             
             GameManager.instance.isStageClear = false;
             if(totitle){
                 SceneManager.LoadScene("title");
                 totitle=false;
+                GameManager.instance.stageNum = 1;
             }
             else{SceneManager.LoadScene("stage_" + nextStageNum);}
             GameManager.instance.stageNum = nextStageNum;
             doSceneChange = true;
             }
+            
         }
 
     }
+    
     /// <summary>
     /// ステージを切り替えます
     ///クリアエフェクト完了後にクリアエフェクトで以下を呼ぶ
     /// </summary>
     /// <param name="num"></param>
+    public void toNextStage(){
+        if(totitle){
+            gotitle();
+        }
+        else{
+            ChangeStage(GameManager.instance.stageNum+1);
+        }
+    }
     public void ChangeStage(int num){
         if(fade!=null){
             nextStageNum =num;
             fade.StartFadeOut();
             startFade=true;
+            mytimer.timereset();
         }
     }
     public void gotitle(){
@@ -106,5 +128,11 @@ public class StageControl : MonoBehaviour
         GameManager.instance.isStageClear=true;
         bgm.Stop();
         GameManager.instance.PlaySE(stageclearSE);
+
+        //クリアタイムを保存
+        
+        mytimer.SetGoalTime();
+        
+        
     }
 }

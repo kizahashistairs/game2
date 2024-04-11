@@ -20,15 +20,15 @@ public class ClearEffect : MonoBehaviour
     {
         if(!comp){
             if(timer<1.0f){
-                transform.localScale=3*Vector3.one*curve.Evaluate(timer);
+                transform.localScale=2.2f*Vector3.one*curve.Evaluate(timer);
                 timer+=Time.deltaTime;
             }
             else{
-                transform.localScale=3*Vector3.one;
+                transform.localScale=2.2f*Vector3.one;
                 timer+=Time.deltaTime;
                 if(timer>1.5f){
-                if(finishornot){ctrl.gotitle();}
-                else{ctrl.ChangeStage(GameManager.instance.stageNum+1);}
+                //if(finishornot){ctrl.gotitle();}
+                //else{ctrl.ChangeStage(GameManager.instance.stageNum+1);}
                 comp = true;
                 }
             }

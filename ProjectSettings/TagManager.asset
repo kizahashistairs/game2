@@ -6,12 +6,14 @@ TagManager:
   tags:
   - ground
   - yourbullet
-  - sokushi
+  - Death
   - enemy
   - hookable
-  - sokushihookable
-  - sokushienemy
+  - DeathHookable
+  - DeathEnemy
   - cannothook
+  - hookshot
+  - wall
   layers:
   - Default
   - TransparentFX
@@ -57,4 +59,7 @@ TagManager:
     locked: 0
   - name: ue
     uniqueID: 1776402137
+    locked: 0
+  - name: layer1
+    uniqueID: 4149162869
     locked: 0

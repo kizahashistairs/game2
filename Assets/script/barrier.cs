@@ -8,7 +8,7 @@ public class barrier : MonoBehaviour
     public AudioClip barrierSE;
     void OnTriggerEnter2D(Collider2D other) {
         if(barriertag.Contains(other.tag)){
-            Destroy(other.gameObject);
+            other.gameObject.SetActive(false);
             GameManager.instance.PlaySE(barrierSE);
         }
     }
